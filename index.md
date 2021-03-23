@@ -2,6 +2,9 @@
 
 
 ## Mar. 2021
+
+[Data Structure: Segregated Free List](./data-structure/segregated-list.md)
+
 [CSAPP: Malloc Lab Summary](./csapp-malloc-lab.md)
 
 [Data Structure: Explicit Free List](./data-structure/data-structure-explicit-free-list.md)
