@@ -63,6 +63,11 @@ The score is 83,  the previous score is 82, so we don't have a significant impro
 The score improves little from 83 to 85. 
 
 
+## Summary 
+
+1. Segmentation fault is easy to get, so before coding, understand the void pointer and also pointer arithmetic operation. 
+2. Start from simple one, I start from implicit free list to explicit free list and then segregated free list and finally optimize on realloc.
+3. Becareful about `memcpy`, memcpy will cause fail when two pointers are overlapped. So another choice is to use `memmove` 
 
 
 
