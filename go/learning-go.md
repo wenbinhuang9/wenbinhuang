@@ -148,9 +148,15 @@ func main() {
 ```
 
 
-## Pointer 
 
-why pointer in go 
+## Slice Mem Allocation  
+
+The following program will cause errors
+```go 
+  arr := []int 
+  arr[0] = 1
+```
+
 
 
 

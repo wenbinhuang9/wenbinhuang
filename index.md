@@ -1,5 +1,7 @@
 
 ## Apr. 2021
+[Learn Assembly Code](../wenbinhuang/assembly/learn-assembly.html)
+
 [Most Frequent VIM Commands to Improve Productivity](../wenbinhuang/tools/vim-usage.md)
 
 [C: Learn getopt to parse command line arguments](./C-language/C-language-learn-getopt-to-parse-command-lines.md)
