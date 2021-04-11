@@ -1,5 +1,7 @@
 
 ## Apr. 2021
+[Learn objdump](./assembly/learn-objdump.html)
+
 [Learn Assembly Code](../wenbinhuang/assembly/learn-assembly.html)
 
 [Most Frequent VIM Commands to Improve Productivity](../wenbinhuang/tools/vim-usage.md)
