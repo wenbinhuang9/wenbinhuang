@@ -1,5 +1,7 @@
 
 ## Apr. 2021
+[An Example: Create an Ubuntu Zsh Docker Image](./docker/create-docker-iamge.html)
+
 [Bomb Lab](./lab/csapp-bomb.html)
 
 [GDB notes](./tools/gdb-notes.md) 
