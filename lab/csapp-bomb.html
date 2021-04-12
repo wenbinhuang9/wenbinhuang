@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>csapp-bomb.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="csapp-bomb-lab">CSAPP Bomb Lab</h1>
+<h2 id="phase-1">Phase 1</h2>
+<p>As we don't have bomb source code, so we need to use tools like <code>gdb, coredump</code> to understand what happens inner bomb.</p>
+<p>Use <code>objdump -t bomb|grep phase</code> to get to know bomb function calls</p>
+<p><img src="./bomb-objdump-grep.png" alt=""></p>
+<p>Use <code>objdump -d bomb</code> to get to know bomb assemble code.</p>
+<p><img src="./objdump-ass-code.png" alt=""></p>
+<p>The above code compare if two strings equal. The first string is the input string, and from <code>mov $0x402400, %esi</code>, we can know that the second string is stored in mem location <code>0x402400</code></p>
+<p>So we can use <code>gdb</code> to run the program to check what is stored in <code>0x402400</code>.</p>
+<p><code>break pahse_1</code> to set the break point.</p>
+<p><code>nexti</code> or <code>stepi</code> to execute next instruction</p>
+<p><code>x/s 0x402400</code> to examine the string in this memory</p>
+<p>And the string is <code>Border relations with Canada have never been better.</code></p>
+<p><img src="./../assembly/phase_1.png" alt=""></p>
+<h2 id="phase-2">Phase 2</h2>
+<p><img src="./../assembly/pahse-2.png" alt=""></p>
+<p>From the above assemble code, I found there is a function <code>read_six_number</code>, so I infered that read_six_number is to scanf number from input, so we should input six number.</p>
+<p>Use <code>gdb</code> to follow the instruction to get to know what causes bomb.  And also use <code>x/w $rbx</code> or <code>p $eax</code> to examine value in register.</p>
+<p>And I found that the following code matters</p>
+<pre class="hljs"><code><div>400f17:       8b 43 fc                mov    -0x4(%rbx),%eax
+400f1a:       01 c0                   add    %eax,%eax
+400f1c:       39 03                   cmp    %eax,(%rbx)
+400f1e:       74 05                   je     400f25 &lt;phase_2+0x29&gt;
+400f20:       e8 15 05 00 00          callq  40143a &lt;explode_bomb&gt;
+</div></code></pre>
+<p><code>-0x4(%rbx)</code> is current number, while (%rbx) is the next number, the bomb not occurs only when 2 * current number equals to next number</p>
+<p>so we can get the string <code>1 2 4 8 16 32</code></p>
+<h2 id="phase3">Phase3</h2>
+<p><img src="./../assembly/phase3.png" alt=""></p>
+<p>Use <code>gdb</code> to execute the code line by line.</p>
+<p>The key code is as following</p>
+<pre class="hljs"><code><div>400f60:       83 f8 01                cmp    $0x1,%eax
+400f63:       7f 05                   jg     400f6a &lt;phase_3+0x27&gt;
+</div></code></pre>
+<p>The above code keeps going when %eax is bigger than 1, otherwise bomb.</p>
+<pre class="hljs"><code><div>  400fb9:       b8 37 01 00 00          mov    $0x137,%eax
+  400fbe:       3b 44 24 0c             cmp    0xc(%rsp),%eax
+  400fc2:       74 05                   je     400fc9 &lt;phase_3+0x86&gt;
+</div></code></pre>
+<p>The above code return only when  0xc(%rsp) equals to 0x137</p>
+<p>So the answer is <code>2 707</code></p>
+<h2 id="phase-4">Phase 4</h2>
+<p><img src="./../assembly/phase-4.png" alt=""></p>
+<p>Use <code>w/s 0x4025cf</code> to print the string, we found that the no. input parameters is 2.</p>
+<p>From <code>  40104d:   85 c0    test   %eax,%eax</code>, we know that the func4 return value has to be 0</p>
+<pre class="hljs"><code><div>401051:       83 7c 24 0c 00          cmpl   $0x0,0xc(%rsp)
+401056:       74 05                   je     40105d &lt;phase_4+0x51&gt;
+</div></code></pre>
+<p>From the above code, we know that the second parameters has to be <code>0</code></p>
+<p>So the key is to dive into <code>func4</code></p>
+<p><img src="../assembly/func4.png" alt=""></p>
+<p>The input parameters are</p>
+<pre class="hljs"><code><div>  40103a:       ba 0e 00 00 00          mov    $0xe,%edx
+  40103f:       be 00 00 00 00          mov    $0x0,%esi
+  401044:       8b 7c 24 08             mov    0x8(%rsp),%edi
+</div></code></pre>
+<p>so edx = 14, esi = 0, edi = first parameter of input</p>
+<p>Let's reverse the code of func4 using C.</p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">func4</span><span class="hljs-params">(<span class="hljs-keyword">int</span> edi, <span class="hljs-keyword">int</span> esi, <span class="hljs-keyword">int</span> edx)</span> </span>{
+    <span class="hljs-keyword">int</span> ecx = (edx - esi) &gt;&gt; <span class="hljs-number">31</span>;
+    <span class="hljs-keyword">int</span> eax = (ecx + (edx - esi)) &gt;&gt; <span class="hljs-number">1</span>;
+    ecx = eax + esi;
+
+    <span class="hljs-keyword">if</span>(ecx &lt;= edi ) {
+        <span class="hljs-keyword">if</span> (ecx &gt;= edi) {
+            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+        }
+        eax =  func4(edi, ecx + <span class="hljs-number">1</span>, edx);
+
+        <span class="hljs-keyword">return</span> <span class="hljs-number">2</span> * eax + <span class="hljs-number">1</span>;
+    }<span class="hljs-keyword">else</span> {
+        <span class="hljs-comment">//ecx &gt; edi</span>
+        edx = ecx - <span class="hljs-number">1</span>; 
+        eax = func4(edi, esi, edx);
+
+        <span class="hljs-keyword">return</span> <span class="hljs-number">2</span> * eax; 
+    }
+
+}
+</div></code></pre>
+<p>Let's write program to check where func4 returning 0</p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">void</span>)</span></span>{
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt;= <span class="hljs-number">0xe</span>; i++){
+        <span class="hljs-keyword">if</span>(func4(i, <span class="hljs-number">0</span>, <span class="hljs-number">0xe</span>) == <span class="hljs-number">0</span>){
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d\n"</span>,i) ;
+            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+        }
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>; 
+}
+</div></code></pre>
+<p>And we found only <code>0</code> meets. And the final answer is <code>0 0</code></p>
+<h2 id="phase-5">Phase 5</h2>
+<p><img src="phase-5.png" alt=""></p>
+<p><code> 40107f:       83 f8 06                cmp    $0x6,%eax</code> tells us that the input length has to be <code>6</code>.</p>
+<p>The key is in the following code, where loops to convert inptut string to another string with mapping table.</p>
+<pre class="hljs"><code><div> 40108b:       0f b6 0c 03             movzbl (%rbx,%rax,1),%ecx
+  40108f:       88 0c 24                mov    %cl,(%rsp)
+  401092:       48 8b 14 24             mov    (%rsp),%rdx
+  401096:       83 e2 0f                and    $0xf,%edx
+  401099:       0f b6 92 b0 24 40 00    movzbl 0x4024b0(%rdx),%edx
+  4010a0:       88 54 04 10             mov    %dl,0x10(%rsp,%rax,1)
+  4010a4:       48 83 c0 01             add    $0x1,%rax
+  4010a8:       48 83 f8 06             cmp    $0x6,%rax
+  4010ac:       75 dd                   jne    40108b &lt;phase_5+0x29&gt;
+</div></code></pre>
+<p>Use <code>x/s 0x4024b0</code> to print the string <code>maduiersnfotvbyl</code>, which is the mapping table.</p>
+<p>The mapping rule is to abtain the index by <code>and    $0xf,%edx</code></p>
+<p>Use <code> x/s 0x40245e</code> to print the target string <code>flyers</code></p>
+<p>so f -&gt; 0x9 + 0x60 = 69 -&gt; i</p>
+<p>l -&gt; 0xf + 0x60 = 0x6f -&gt; o</p>
+<p>y -&gt; 0xe + 0x60 = 0x6e -&gt; n</p>
+<p>e -&gt; 0x5 + 0x60 = 0x65 -&gt; e</p>
+<p>r -&gt; 0x6 + 0x60 = 0x66 -&gt; f</p>
+<p>s -&gt; 0x7 + 0x60 = 0x67 -&gt; g</p>
+<p>so the final answer is <code>ionefg</code></p>
+<h2 id="phase-6">Phase 6</h2>
+<p>This is the harderst one in this lab.</p>
+<p><img src="./phase-6-1.png" alt=""></p>
+<p>The first step is to check each value is small or equal to 6 and also every two input numbers should be different.</p>
+<p>There are two loops.</p>
+<p>The out loop jump is in <code>401151:    eb c1          jmp    401114 &lt;phase_6+0x20&gt;</code></p>
+<p>The inner loop jump is in <code> 40114b:       7e e8     jle    401135 &lt;phase_6+0x41&gt;</code></p>
+<p><code>401145:       83 c3 01                add    $0x1,%ebx</code>, %ebx is the inner loop variable , %rbp stores the current value</p>
+<p><code>40113b:       39 45 00                cmp    %eax,0x0(%rbp)</code> compares current value with the other numbers after it , keep going only they all are different.</p>
+<p><code>40114d:       49 83 c5 04             add    $0x4,%r13</code> , %r13 is the outer loop variable, it is a address pointing to a input number.</p>
+<p><code>40111e:       83 f8 05                cmp    $0x5,%eax</code>, this line tells that each input number has to be smaller or equal to 6.</p>
+<p>The second step is to make every input number x to be 7 - x</p>
+<p><img src="phase-6-2.png" alt=""></p>
+<p>The code above is also a loop. Loop variable is <code>%rax</code>, which points the address of an input number.</p>
+<p><code> 40115b:       b9 07 00 00 00          mov    $0x7,%ecx</code> is to make an input number x = 7 - x</p>
+<p>The third step becomes difficult.</p>
+<p><img src="phase-6-3.png" alt=""></p>
+<p><code>401183:       ba d0 32 60 00          mov    $0x6032d0,%edx</code>, we found  <code>0x6032d0</code> frequently occurs, which seems like an address. So let's check what is inside <code>0x6032d0</code>.</p>
+<p><img src="phase-6-3-1.png" alt=""></p>
+<p>The above node is a linked node, so we can infer that it is a linked list. And we can also infer the linked list structure from its data.</p>
+<pre class="hljs"><code><div><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">LinkedList</span> {</span>
+    <span class="hljs-keyword">int</span> index;
+    <span class="hljs-keyword">int</span> value; 
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">LinkedList</span>* <span class="hljs-title">next</span>;</span> 
+}
+</div></code></pre>
+<p>The following code is the key to understand in this part.</p>
+<p><img src="phase-6-3-2.png" alt=""></p>
+<p><code>401176:       48 8b 52 08             mov    0x8(%rdx),%rdx</code> , is the code like cur = cur -&gt; next</p>
+<p><code>40117d:       39 c8                   cmp    %ecx,%eax</code>, %eax is the current input number.</p>
+<p>So the above code is to find the linked node with index equal to an input number.</p>
+<p>For example, if input numbers are 3 2 1 4 5 6, and the linked node is put into stack with the sequences of node3, node2, node1, node4, node5, node6.</p>
+<p>The following code is the fourth step to determine the final answer.</p>
+<p><img src="phase-6-4.png" alt=""></p>
+<p>The key code is in <code> 4011e5:       39 03                   cmp    %eax,(%rbx)</code>, where (%brx) is the current node value, and %eax is its next node value, and the current node value has to be bigger or equal to next node value.</p>
+<p>So we go back to check the node value.</p>
+<p><img src="phase-6-3-1.png" alt=""></p>
+<p>node3 &gt; node4 &gt; node5 &gt;node6 &gt; node1 &gt; node2</p>
+<p>And we also have another rule x = 7 -x</p>
+<p>so we get the final answer <code>4 3 2 1 6 5</code></p>
+<h2 id="summary">Summary</h2>
+<ol>
+<li>Understand registers conventional use. %eax is usually used as return value, %rdi, %rsi is used as first , second parameters.</li>
+<li>Understand the code control structure first. Identify the loop code like <code>jmp</code> and also try to find the registers used for loop.</li>
+<li>Be careful about the constant value like an address 0x6040d0 , use <code>x/w</code>, <code>x/s</code> to check the value in that address.</li>
+<li>If you don't know where to start, just  use gdb to debug line by line.</li>
+</ol>
+<p>Reference</p>
+<p><a href="https://web.stanford.edu/class/cs107/guide/x86-64.html">standford cs107 Guide to x86-64</a></p>
+<p><a href="http://csapp.cs.cmu.edu/3e/bomblab.pdf">csapp bomb lab</a></p>
+<p><a href="http://csapp.cs.cmu.edu/2e/docs/gdbnotes-x86-64.pdf">gdb notes x86-64</a></p>
+
+</body>
+</html>

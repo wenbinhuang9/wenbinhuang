@@ -37,3 +37,7 @@ int main() {
 
 `print $rax` to print value in register %rax
 
+
+Reference 
+
+[csapp gdbnotes](http://csapp.cs.cmu.edu/2e/docs/gdbnotes-x86-64.pdf)

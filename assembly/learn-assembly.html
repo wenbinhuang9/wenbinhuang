@@ -367,17 +367,44 @@ code {
   </script>
 <h1 id="learn-assembly-code">Learn Assembly Code</h1>
 <p>This lab is to learn assembly code on x86-64.</p>
+<h2 id="understand-register-conventional-use">Understand Register Conventional Use</h2>
+<p><img src="reg-conventional-use.png" alt=""></p>
+<h2 id="start-from-a-simple-code">Start From a Simple Code</h2>
 <pre class="hljs"><code><div><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">sum</span> <span class="hljs-params">(<span class="hljs-keyword">int</span> a, <span class="hljs-keyword">int</span> b)</span> </span>{
     <span class="hljs-keyword">return</span> a + b;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">cmp</span><span class="hljs-params">(<span class="hljs-keyword">int</span> a, <span class="hljs-keyword">int</span> b)</span> </span>{
+    <span class="hljs-keyword">if</span> (a &gt; b) {
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    }<span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>; 
+    }
+}
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">sum_arr</span><span class="hljs-params">(<span class="hljs-keyword">int</span>* arr, <span class="hljs-keyword">int</span> n )</span> </span>{
+    <span class="hljs-keyword">int</span> s = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; n; i++) {
+        s += arr[i];
+    }
+    <span class="hljs-keyword">return</span> s;
 }
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
     <span class="hljs-keyword">int</span> c = sum(<span class="hljs-number">10</span>, <span class="hljs-number">20</span>);
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d\n"</span>, c);
  
+    <span class="hljs-keyword">int</span> cmpvalue = cmp(<span class="hljs-number">11</span>, <span class="hljs-number">100</span>);
+
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d\n"</span>, cmpvalue);
+
+    <span class="hljs-keyword">int</span> arr[] = {<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>};
+
+    <span class="hljs-keyword">int</span> s = sum_arr(arr, <span class="hljs-number">5</span>);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"sum value is %d\n"</span>, s);
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
 }
 </div></code></pre>
+<h2 id="sum-assemble-code">sum assemble code</h2>
 <p>Compile the code <code>gcc sum.c</code></p>
 <p>Click <code>gdb a.out</code> to enter into gdb.</p>
 <p>Use <code>disas sum</code> to disassemble the binary code of sum function.</p>
@@ -399,6 +426,31 @@ code {
 2. Local variable address can be obtained from %rbp
 3. Before calling a subprogram, we need to preserve current program's %rbp in order to restore later. 
 </code></pre>
+<h2 id="cmp-assemble-code">cmp assemble code</h2>
+<p><img src="./cmp-assemble-code.png" alt=""></p>
+<p>Let's start directly from <code>cmp</code> instruction</p>
+<p><code>cmp -0x8(%rbp),%eax</code>, comapre b with a , where a is in %eax, and b is in -0x8(%rbp)</p>
+<p><code>jle 0x4005c3 &lt;cmp+25&gt;</code>, jump to instruction 0x4005c3 if b is less than or equal to  a</p>
+<h2 id="sumarr-assemble-code">sum_arr assemble code</h2>
+<p><img src="./sum_arr_assemble.png" alt=""></p>
+<p><code>mov  %rdi,-0x18(%rbp)</code>, the first arugment arr</p>
+<p><code>mov  %esi,-0x1c(%rbp)</code> , the second argument n</p>
+<p><code>movl   $0x0,-0x8(%rbp)</code>, int s = 0</p>
+<p><code>movl   $0x0,-0x4(%rbp)</code>, int  i = 0</p>
+<p><code>jmp    0x400602 &lt;sum_arr+56&gt;</code>, start to execute loop code</p>
+<p><code>&lt;+56&gt;:	mov  -0x4(%rbp),%eax</code>, move i to %eax</p>
+<p><code>cmp    -0x1c(%rbp),%eax</code>, compare n with i</p>
+<p><code>&lt;+62&gt;:	jl     0x4005e5 &lt;sum_arr+27&gt;</code>, jump to 0x4005e5 if i &lt; n</p>
+<p><code>&lt;+32&gt;:	lea    0x0(,%rax,4),%rdx</code>, compute the address offset based on i</p>
+<p><code>add    %rdx,%rax</code>, compute address of arr[i]</p>
+<p><code> &lt;+47&gt;: mov    (%rax),%eax</code> store arr[i] into %eax</p>
+<p><code>&lt;+49&gt;:	add    %eax,-0x8(%rbp)</code>, s += arr[i]</p>
+<h3 id="summary">summary</h3>
+<pre><code>1. Loop can still be implemented by cmp instruction 
+2. lea can be used to compute address offset 
+</code></pre>
+<p>Reference</p>
+<p><a href="https://web.stanford.edu/class/cs107/guide/x86-64.html">Guide to x86-64</a></p>
 
 </body>
 </html>

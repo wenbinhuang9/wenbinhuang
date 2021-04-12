@@ -1,5 +1,9 @@
 
 ## Apr. 2021
+[Bomb Lab](./lab/csapp-bomb.html)
+
+[GDB notes](./tools/gdb-notes.md) 
+
 [Learn objdump](./assembly/learn-objdump.html)
 
 [Learn Assembly Code](../wenbinhuang/assembly/learn-assembly.html)
