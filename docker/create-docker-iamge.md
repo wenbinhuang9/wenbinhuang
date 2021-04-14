@@ -40,4 +40,4 @@ docker run -it wenbinhuang/ubuntu-zsh
 
 Reference 
 
-https://github.com/mhlavac/docker-ubuntu-zsh/blob/master/Dockerfile
+[github docker-ubuntu-zsh](https://github.com/mhlavac/docker-ubuntu-zsh/blob/master/Dockerfile)
