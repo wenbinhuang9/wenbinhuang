@@ -8,8 +8,15 @@ There are three states in raft.
 - Candidate
 - Follower
 
+Follower -> Candidate: when a follower gets time out with leader, it upgrades itself to candidate to compete for leader. 
 
-Follower -> Candidate: when follower gets time out with leader, it upgrades itself to candidate to compete for leader. 
+Candidate -> Follower: when candidate discovers current leader or new term. 
 
-Candidate -> Follower: when 
+Candidate -> Leader: receives majority of votes 
+
+Leader -> Follower: discover servers with higher term. 
+
+
+Each server maintains its term, if the current server's term is samller than other server's term, update the term to new. 
+
 

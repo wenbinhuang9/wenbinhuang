@@ -1,8 +1,16 @@
 
 ## Apr. 2021
+[CSAPP: Attack Lab](./lab/csapp-attack-lab.html)
+
+[Use gdb to debug xv6 in Ubuntu](./lab/debug-in-xv6-ubuntu.md)
+
+[mit6824: Debug Raft Leader Election](./lab/debug-raft-leader-election.html)
+
+[Mistakes I Made When Programming Golang](./go/syntax-mistakes-in-go.html)
+
 [Docker Notes](./docker/docker-notes.md)
 
-[Docker: Build xv6 Environment](./docker/docker-build-xv6-os-environment.md)
+[mit6824: Using Docker to Build xv6](./docker/docker-build-xv6-os-environment.md)
 
 [Unix Fork](./Unix/unix-fork.md)
 

