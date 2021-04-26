@@ -1,5 +1,13 @@
 
 ## Apr. 2021
+[xv6: Physical Memory Allocation and Comparisons With Linux](./OS/xv6-kernel-phy-mem.html)
+
+[Monolithic Kernel vs Micro Kernel](./OS/microkernel-vs-monolithic-kernel.md)
+
+[User Mode and Kernel Mode](./OS/usermode-and-kernelmode.md)
+
+[Raft and Mathmactical Proof](./distributed-system/raft-mathmatical-proof.md)
+
 [CSAPP: Attack Lab](./lab/csapp-attack-lab.html)
 
 [Use gdb to debug xv6 in Ubuntu](./lab/debug-in-xv6-ubuntu.md)
