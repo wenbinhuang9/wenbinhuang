@@ -1,5 +1,9 @@
 
 ## Apr. 2021
+[对NP定义的理解](./computation/NP-definition.md)
+
+[Pumping Lemma, One of My Favorite Proof Skills](./computation/pumping_lemma.html)
+
 [xv6: Physical Memory Allocation and Comparisons With Linux](./OS/xv6-kernel-phy-mem.html)
 
 [Monolithic Kernel vs Micro Kernel](./OS/microkernel-vs-monolithic-kernel.md)
