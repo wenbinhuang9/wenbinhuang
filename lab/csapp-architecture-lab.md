@@ -3,11 +3,12 @@
 
 Part C is a optimization lab. 
 
-Two optimized ideas 
+Four optimized ideas 
 
 1. Add iaddq to pipeline 
 2. Replace subq with iddaq 
 3. Use unrolling loop 
+4. Reorder instruction, put similar instruction together
 
 Initially, I use four unrolling loop, the code is very similar to the below one. 
 

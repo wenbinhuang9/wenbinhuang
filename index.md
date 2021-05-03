@@ -1,4 +1,7 @@
 ## May 2021
+[Focus on MIT 6s081](./lab/focus-one-mit6s081.md)
+
+[Just Finished All CSAPP Labs and Congratulations ](./lab/csapp-summary.md)
 
 [CSAPP Architecture Lab, Part C Optimization](./lab/csapp-architecture-lab.md)
 
