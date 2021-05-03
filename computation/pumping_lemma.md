@@ -19,7 +19,7 @@ Based on above picture, a string in language A with at least length p  can be di
 
 Below is a language A, I will use pumping lemma to prove it is not regular. 
 
-> $$A =  \{{a^nb^n| n >=0}\} $$
+> A = {a^nb^n| n >=0} 
 
 Assume A is regular, let s = xyz = ${a^pb^p}$.
 

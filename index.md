@@ -1,3 +1,6 @@
+## May 2021
+
+[CSAPP Architecture Lab, Part C Optimization](./lab/csapp-architecture-lab.md)
 
 ## Apr. 2021
 [对NP定义的理解](./computation/NP-definition.md)

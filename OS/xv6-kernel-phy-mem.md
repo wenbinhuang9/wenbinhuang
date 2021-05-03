@@ -97,6 +97,23 @@ kfree(void *pa)
 }
 ```
 
+### Pros and Cons 
+
+Pros 
+
+1. simplicity 
+
+Cons 
+
+1. internal fragmentation
+2. Does not support larger memory allocation such as 8KB, 1MB. 
+
+
+### How Linux Manage Kernel Memory 
+
+
+
+
 
 
 
