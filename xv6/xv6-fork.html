@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>xv6-fork.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="xv6-fork">xv6: fork</h1>
+<p>fork is a system call to create a  child process. The impl of fork can be divided into below stages</p>
+<ul>
+<li>Allocate a  process  data structure <code>struct proc</code>.</li>
+<li>Copy parent mem into child mem</li>
+<li>Reference file descriptors from parent.</li>
+</ul>
+<p><code>allocproc()</code> is to allocate a <code>proc struct</code>.</p>
+<p><code>uvmcopy</code> is to copy mem from parent to child.</p>
+<p><code>*(np-&gt;trapframe) = *(p-&gt;trapframe);</code> is to copy the parent's saved registers into child's saved registers. trapframe is a physical page used to save and restore registers when trap occurs and then forces current process to switch to kernel space.</p>
+<p><code>np-&gt;trapframe-&gt;a0 = 0;</code>  when using fork, we have the code like below.</p>
+<pre class="hljs"><code><div>pid = fork();
+<span class="hljs-keyword">if</span> (pid==<span class="hljs-number">0</span>) {
+  <span class="hljs-comment">//exec child's process</span>
+}
+<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (pid &gt; <span class="hljs-number">0</span>) {
+  <span class="hljs-comment">//exec parent's process</span>
+}<span class="hljs-keyword">else</span> {
+  <span class="hljs-comment">// fork fails</span>
+}
+</div></code></pre>
+<p>The return value of fork() is stored in a0 register, and of course the child process of fork() is returned back to 0. So np-&gt;trapframe-&gt;a0 is set to 0, when child swtiches back to user space, a0 will be restore into 0.</p>
+<p><code>np-&gt;ofile[i] = filedup(p-&gt;ofile[i]);</code> is to reference file descriptors, which means the parent and child share same file descriptors.</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Create a new process, copying the parent.</span>
+<span class="hljs-comment">// Sets up child kernel stack to return as if from fork() system call.</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span>
+<span class="hljs-title">fork</span><span class="hljs-params">(<span class="hljs-keyword">void</span>)</span>
+</span>{
+  <span class="hljs-keyword">int</span> i, pid;
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">proc</span> *<span class="hljs-title">np</span>;</span>
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">proc</span> *<span class="hljs-title">p</span> = <span class="hljs-title">myproc</span>();</span>
+
+  <span class="hljs-comment">// Allocate process.</span>
+  <span class="hljs-keyword">if</span>((np = allocproc()) == <span class="hljs-number">0</span>){
+    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+  }
+
+  <span class="hljs-comment">// Copy user memory from parent to child.</span>
+  <span class="hljs-keyword">if</span>(uvmcopy(p-&gt;pagetable, np-&gt;pagetable, p-&gt;sz) &lt; <span class="hljs-number">0</span>){
+    freeproc(np);
+    <span class="hljs-built_in">release</span>(&amp;np-&gt;lock);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+  }
+  np-&gt;sz = p-&gt;sz;
+
+  np-&gt;parent = p;
+
+  <span class="hljs-comment">// copy saved user registers.</span>
+  *(np-&gt;trapframe) = *(p-&gt;trapframe);
+
+  <span class="hljs-comment">// Cause fork to return 0 in the child.</span>
+  np-&gt;trapframe-&gt;a0 = <span class="hljs-number">0</span>;
+
+  <span class="hljs-comment">// increment reference counts on open file descriptors.</span>
+  <span class="hljs-keyword">for</span>(i = <span class="hljs-number">0</span>; i &lt; NOFILE; i++)
+    <span class="hljs-keyword">if</span>(p-&gt;ofile[i])
+      np-&gt;ofile[i] = filedup(p-&gt;ofile[i]);
+  np-&gt;cwd = idup(p-&gt;cwd);
+
+  safestrcpy(np-&gt;name, p-&gt;name, <span class="hljs-keyword">sizeof</span>(p-&gt;name));
+
+  pid = np-&gt;pid;
+
+  np-&gt;state = RUNNABLE;
+
+  <span class="hljs-built_in">release</span>(&amp;np-&gt;lock);
+
+  <span class="hljs-keyword">return</span> pid;
+}
+</div></code></pre>
+<p><code>proc[NPROC]</code> is a global array storing 64 <code>proc</code> structures, which means xv6 supports at most 64 processes. From here, we know that xv6 uses the most simple way, using static array, to manage allocation of process data structure.   In real world, like unix , it uses <code>double linked list</code> to maintina all processes and then uses <code>slab allocator</code>  to allocate and deallocate process data structure.</p>
+<p><code>proc_pagetable(p)</code> is to allocate a empty page table for process.</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Look in the process table for an UNUSED proc.</span>
+<span class="hljs-comment">// If found, initialize state required to run in the kernel,</span>
+<span class="hljs-comment">// and return with p-&gt;lock held.</span>
+<span class="hljs-comment">// If there are no free procs, or a memory allocation fails, return 0.</span>
+<span class="hljs-function"><span class="hljs-keyword">static</span> struct proc*
+<span class="hljs-title">allocproc</span><span class="hljs-params">(<span class="hljs-keyword">void</span>)</span>
+</span>{
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">proc</span> *<span class="hljs-title">p</span>;</span>
+  <span class="hljs-comment">// 1. Allocating a proc structure from `proc[NPROC]`</span>
+  <span class="hljs-keyword">for</span>(p = proc; p &lt; &amp;proc[NPROC]; p++) {
+    acquire(&amp;p-&gt;lock);
+    <span class="hljs-keyword">if</span>(p-&gt;state == UNUSED) {
+      <span class="hljs-keyword">goto</span> found;
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-built_in">release</span>(&amp;p-&gt;lock);
+    }
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+
+found:
+  p-&gt;pid = allocpid();
+
+  <span class="hljs-comment">// Allocate a trapframe page.</span>
+  <span class="hljs-keyword">if</span>((p-&gt;trapframe = (struct trapframe *)kalloc()) == <span class="hljs-number">0</span>){
+    <span class="hljs-built_in">release</span>(&amp;p-&gt;lock);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+  }
+
+  <span class="hljs-comment">// An empty user page table.</span>
+  p-&gt;pagetable = proc_pagetable(p);
+  <span class="hljs-keyword">if</span>(p-&gt;pagetable == <span class="hljs-number">0</span>){
+    freeproc(p);
+    <span class="hljs-built_in">release</span>(&amp;p-&gt;lock);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+  }
+
+  <span class="hljs-comment">// Set up new context to start executing at forkret,</span>
+  <span class="hljs-comment">// which returns to user space.</span>
+  <span class="hljs-built_in">memset</span>(&amp;p-&gt;context, <span class="hljs-number">0</span>, <span class="hljs-keyword">sizeof</span>(p-&gt;context));
+  p-&gt;context.ra = (uint64)forkret;
+  p-&gt;context.sp = p-&gt;kstack + PGSIZE;
+
+  <span class="hljs-keyword">return</span> p;
+}
+</div></code></pre>
+<h3 id="pros-and-cons">Pros and Cons</h3>
+<p>Pros</p>
+<ul>
+<li>simplicity. <code>proc</code> is maintained by a static array to make allocate a process data structure to be extremely easy.</li>
+</ul>
+<p>Cons</p>
+<ul>
+<li>Copy mem from parent to child is most time consuming of fork. The solution to solve this is to implement a copy on write.</li>
+<li>Only 64 processes are allow in maximum. This can be solved by dynamically allocate and deallocte <code>proc</code> using ideas like <code>object poos</code>, <code>slab allocator</code></li>
+<li>Each process is assigned a page for <code>trapframe</code>. <code>trapframe</code> is only used for hundreds of bytes, causing <code>internal framentation</code>, linux solves this by using <code>slab allocator</code>.</li>
+</ul>
+<h3 id="linux-world">Linux World</h3>
+<ul>
+<li>Uses <code>double linked list</code> to dynamically link all processes.</li>
+<li>Uses <code>slab allocator</code> to allocate and deallocate processes with flexibility. <code>slab allocator</code> also helps reduce internal framentation.</li>
+<li>Memory is copy on write, this is one of the most successful optimization of fork in linux.</li>
+</ul>
+
+</body>
+</html>
