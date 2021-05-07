@@ -20,3 +20,10 @@ gdb-multiarch
 
 ![](gdb-xv6-debug.png)
 
+
+If you want to debug on a xv6 user program, use command `file` gdb like `file user/wc`, set breakpoint and then run `user program ` in xv6.
+
+### Reference 
+
+[Questions about debugging in xv6(riscv) -from MIT 6.S081/6.828 2019 OS course](https://stackoverflow.com/questions/62241780/questions-about-debugging-in-xv6riscv-from-mit-6-s081-6-828-2019-os-course)
+

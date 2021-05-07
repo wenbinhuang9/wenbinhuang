@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>xv6-multithreading.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="xv6-multithreading-lab">xv6: multithreading lab</h1>
+<h3 id="implementation-goals-and-questions">Implementation Goals and Questions</h3>
+<blockquote>
+<p>Goal 1 :  One goal is ensure that when thread_schedule() runs a given thread for the first time, the thread executes the function passed to thread_create(), on its own stack.</p>
+</blockquote>
+<p>Goal 1 Impl Questions</p>
+<ol>
+<li>When, where and how to run the thread function.
+<ul>
+<li>When the thread is scheduled for the first time. So the function should be triggered in thread_sched. The function is not directly exectued, we only  need to change pc.</li>
+<li>pc points to the next intruction to execute, so we may need to initialize pc and also load and resotre pc during context switch.</li>
+<li>Instead, swtch saves the ra register,
+which holds the return address from which swtch was called.  From here , we know that we need to let <code>ra store pc</code>.</li>
+</ul>
+</li>
+<li>How to run the thread function on its stack.
+<ul>
+<li>use <code>sp</code> register</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>Goal 2:  Another goal is to ensure that thread_switch saves the registers of the thread being switched away from, restores the registers of the thread being switched to, and returns to the point in the latter thread's instructions where it last left off.</p>
+</blockquote>
+<p>Goal 2 Impl Questions</p>
+<ol>
+<li>As we store register into thread strucuture, how to pass arguments into thread_switch, and how thread_switch retrieves arguments
+<ul>
+<li>retrieves arguments from registers, a0, a1 is used as arguments to callee conventionally.</li>
+</ul>
+</li>
+</ol>
+<h3 id="impl-details">Impl Details</h3>
+<p>Adding a context switch , same as context structure in <code>proc.h</code></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Saved registers for kernel context switches.</span>
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">context</span> {</span>
+  uint64 ra;
+  uint64 sp;
+
+  <span class="hljs-comment">// callee-saved</span>
+  uint64 s0;
+  uint64 s1;
+  uint64 s2;
+  uint64 s3;
+  uint64 s4;
+  uint64 s5;
+  uint64 s6;
+  uint64 s7;
+  uint64 s8;
+  uint64 s9;
+  uint64 s10;
+  uint64 s11;
+};
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread</span> {</span>
+  <span class="hljs-keyword">char</span>       <span class="hljs-built_in">stack</span>[STACK_SIZE]; <span class="hljs-comment">/* the thread's stack */</span>
+  <span class="hljs-keyword">int</span>        state;             <span class="hljs-comment">/* FREE, RUNNING, RUNNABLE */</span>
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">context</span>    <span class="hljs-title">c</span>;</span> 
+
+};
+</div></code></pre>
+<p><code>t-&gt;c.ra = (uint64)func; </code> returns back to pc.
+<code>t-&gt;c.sp</code> runs on the thread stack</p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">void</span> 
+<span class="hljs-title">thread_create</span><span class="hljs-params">(<span class="hljs-keyword">void</span> (*func)())</span>
+</span>{
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread</span> *<span class="hljs-title">t</span>;</span>
+
+  <span class="hljs-keyword">for</span> (t = all_thread; t &lt; all_thread + MAX_THREAD; t++) {
+    <span class="hljs-keyword">if</span> (t-&gt;state == FREE) <span class="hljs-keyword">break</span>;
+  }
+  t-&gt;state = RUNNABLE;
+  <span class="hljs-comment">// YOUR CODE HERE</span>
+  t-&gt;c.ra = (uint64)func; 
+  t-&gt;c.sp = (uint64)(t-&gt;<span class="hljs-built_in">stack</span> + STACK_SIZE); <span class="hljs-comment">// stack grows down</span>
+}
+</div></code></pre>
+<p><code>thread_switch((uint64)&amp;t-&gt;c, (uint64)&amp;next_thread-&gt;c);</code>, context switch here.</p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">thread_schedule</span><span class="hljs-params">(<span class="hljs-keyword">void</span>)</span>
+</span>{
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread</span> *<span class="hljs-title">t</span>, *<span class="hljs-title">next_thread</span>;</span>
+
+  <span class="hljs-comment">/* Find another runnable thread. */</span>
+  next_thread = <span class="hljs-number">0</span>;
+  t = current_thread + <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; MAX_THREAD; i++){
+    <span class="hljs-keyword">if</span>(t &gt;= all_thread + MAX_THREAD)
+      t = all_thread;
+    <span class="hljs-keyword">if</span>(t-&gt;state == RUNNABLE) {
+      next_thread = t;
+      <span class="hljs-keyword">break</span>;
+    }
+    t = t + <span class="hljs-number">1</span>;
+  }
+
+  <span class="hljs-keyword">if</span> (next_thread == <span class="hljs-number">0</span>) {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"thread_schedule: no runnable threads\n"</span>);
+    <span class="hljs-built_in">exit</span>(<span class="hljs-number">-1</span>);
+  }
+
+  <span class="hljs-keyword">if</span> (current_thread != next_thread) {         <span class="hljs-comment">/* switch threads?  */</span>
+    next_thread-&gt;state = RUNNING;
+    t = current_thread;
+    current_thread = next_thread;
+    <span class="hljs-comment">/* YOUR CODE HERE
+     * Invoke thread_switch to switch from t to next_thread:
+     * thread_switch(??, ??);
+     */</span>
+    thread_switch((uint64)&amp;t-&gt;c, (uint64)&amp;next_thread-&gt;c);
+
+  } <span class="hljs-keyword">else</span>
+    next_thread = <span class="hljs-number">0</span>;
+}
+
+</div></code></pre>
+<p>Switch is done by assembly code. a0 is the first argument, a1 is the second argu.</p>
+<pre class="hljs"><code><div>	.<span class="hljs-built_in">text</span>
+
+	<span class="hljs-comment">/*
+         * save the old thread's registers,
+         * restore the new thread's registers.
+         */</span>
+
+	.globl thread_switch
+thread_switch:
+	<span class="hljs-comment">/* YOUR CODE HERE */</span>
+		sd ra, <span class="hljs-number">0</span>(a0)
+        sd sp, <span class="hljs-number">8</span>(a0)
+        sd s0, <span class="hljs-number">16</span>(a0)
+        sd s1, <span class="hljs-number">24</span>(a0)
+        sd s2, <span class="hljs-number">32</span>(a0)
+        sd s3, <span class="hljs-number">40</span>(a0)
+        sd s4, <span class="hljs-number">48</span>(a0)
+        sd s5, <span class="hljs-number">56</span>(a0)
+        sd s6, <span class="hljs-number">64</span>(a0)
+        sd s7, <span class="hljs-number">72</span>(a0)
+        sd s8, <span class="hljs-number">80</span>(a0)
+        sd s9, <span class="hljs-number">88</span>(a0)
+        sd s10, <span class="hljs-number">96</span>(a0)
+        sd s11, <span class="hljs-number">104</span>(a0)
+
+        ld ra, <span class="hljs-number">0</span>(a1)
+        ld sp, <span class="hljs-number">8</span>(a1)
+        ld s0, <span class="hljs-number">16</span>(a1)
+        ld s1, <span class="hljs-number">24</span>(a1)
+        ld s2, <span class="hljs-number">32</span>(a1)
+        ld s3, <span class="hljs-number">40</span>(a1)
+        ld s4, <span class="hljs-number">48</span>(a1)
+        ld s5, <span class="hljs-number">56</span>(a1)
+        ld s6, <span class="hljs-number">64</span>(a1)
+        ld s7, <span class="hljs-number">72</span>(a1)
+        ld s8, <span class="hljs-number">80</span>(a1)
+        ld s9, <span class="hljs-number">88</span>(a1)
+        ld s10, <span class="hljs-number">96</span>(a1)
+        ld s11, <span class="hljs-number">104</span>(a1)
+        
+		ret    <span class="hljs-comment">/* return to ra */</span>
+
+</div></code></pre>
+
+</body>
+</html>
