@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>fs-block-cache.md</title>
+<title>xv6:debug-on-locking-lab.md</title>
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
 
 <style>
@@ -365,23 +365,14 @@ code {
           : 'default'
     });
   </script>
-<h1 id="xv6-block-cache-in-file-system">xv6: Block Cache in File System</h1>
-<p>Disk is slow, while mem is far more fast, so block cache is used to reduce the speed gab between mem and disk.</p>
-<p>Buffer cache is built on the top of Disk. The storage unit in disk is block, the Buffer Cache is to deal with block.</p>
-<p><img src="xv6-fs-layer.png" alt=""></p>
-<p>bcache data structure. The buffers are linked by double linked list, which is a data structure frequently used in LRU. And the buffer cache also uses LRU.</p>
-<pre class="hljs"><code><div><span class="hljs-class"><span class="hljs-keyword">struct</span> {</span>
-  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">spinlock</span> <span class="hljs-title">lock</span>;</span>
-  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">buf</span> <span class="hljs-title">buf</span>[<span class="hljs-title">NBUF</span>];</span>
-
-  <span class="hljs-comment">// Linked list of all buffers, through prev/next.</span>
-  <span class="hljs-comment">// Sorted by how recently the buffer was used.</span>
-  <span class="hljs-comment">// head.next is most recent, head.prev is least.</span>
-  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">buf</span> <span class="hljs-title">head</span>;</span>
-} bcache;
-
-</div></code></pre>
-<p>A <code>buf</code> structure is mapping to a disk block. <code>valid = 0</code> indidates the block content in buffer is invalid, in other words, the buffer needs load content from disk.</p>
+<h1 id="xv6-debug-locking-lab">xv6: Debug Locking Lab</h1>
+<p>When optimizing xv6 cache buffer lock contention, the most time I spent is on debugging. There are two reasons of bug.</p>
+<ol>
+<li>Pointer is error-prone, and I still not get familiar with pointer.</li>
+<li>Operations on linked list is also error prone, because operations like inserting, deleting is error-prone.</li>
+</ol>
+<h3 id="pointer-bug">Pointer Bug</h3>
+<p>There is a bug below. I want to delete a buf node in doubly linked list. The bug is here <code>struct buf b = table[i]; </code>, which will cause the deletion is computed on <code>&amp;b</code> but not <code>&amp;table[i]</code>, because <code>&amp;b != &amp;table[i]</code> at this time. So the deletion fails below.</p>
 <pre class="hljs"><code><div><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">buf</span> {</span>
   <span class="hljs-keyword">int</span> valid;   <span class="hljs-comment">// has data been read from disk?</span>
   <span class="hljs-keyword">int</span> disk;    <span class="hljs-comment">// does disk "own" buf?</span>
@@ -392,129 +383,39 @@ code {
   <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">buf</span> *<span class="hljs-title">prev</span>;</span> <span class="hljs-comment">// LRU cache list</span>
   <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">buf</span> *<span class="hljs-title">next</span>;</span>
   uchar data[BSIZE];
+  uint ts; 
 };
-</div></code></pre>
-<p>Link all buffers into head.</p>
-<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">void</span>
-<span class="hljs-title">binit</span><span class="hljs-params">(<span class="hljs-keyword">void</span>)</span>
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">buf</span> <span class="hljs-title">table</span>[<span class="hljs-title">NBUCKET</span>];</span><span class="hljs-comment">// each element in table is a doubly linked list with a dummy head. </span>
+
+<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span>
+<span class="hljs-title">rm</span><span class="hljs-params">(<span class="hljs-keyword">int</span> blockno, struct buf *e)</span> <span class="hljs-comment">// remove buf in double linked list </span>
 </span>{
-  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">buf</span> *<span class="hljs-title">b</span>;</span>
+    e-&gt;prev-&gt;next = e-&gt;next;
+    e-&gt;next-&gt;prev = e-&gt;prev;
 
-  initlock(&amp;bcache.lock, <span class="hljs-string">"bcache"</span>);
-
-  <span class="hljs-comment">// Create linked list of buffers</span>
-  bcache.head.prev = &amp;bcache.head;
-  bcache.head.next = &amp;bcache.head;
-  <span class="hljs-keyword">for</span>(b = bcache.buf; b &lt; bcache.buf+NBUF; b++){
-    b-&gt;next = bcache.head.next;
-    b-&gt;prev = &amp;bcache.head;
-    initsleeplock(&amp;b-&gt;lock, <span class="hljs-string">"buffer"</span>);
-    bcache.head.next-&gt;prev = b;
-    bcache.head.next = b;
-  }
-}
-</div></code></pre>
-<p>The first step is to try to find the block from buffer. If not found, then allocting a buffer using LRU strategy. It is important to ask why always return a blocked buffer? Because file system is shared by processes, it is  important to provide synchronization to access block. So here, when getting a block, it must be locked before return to ensure the invariant that only one process can access the block .</p>
-<pre class="hljs"><code><div><span class="hljs-comment">// Look through buffer cache for block on device dev.</span>
-<span class="hljs-comment">// If not found, allocate a buffer.</span>
-<span class="hljs-comment">// In either case, return locked buffer.</span>
-<span class="hljs-function"><span class="hljs-keyword">static</span> struct buf*
-<span class="hljs-title">bget</span><span class="hljs-params">(uint dev, uint blockno)</span>
-</span>{
-  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">buf</span> *<span class="hljs-title">b</span>;</span>
-
-  acquire(&amp;bcache.lock);
-
-  <span class="hljs-comment">// Is the block already cached?</span>
-  <span class="hljs-keyword">for</span>(b = bcache.head.next; b != &amp;bcache.head; b = b-&gt;next){
-    <span class="hljs-keyword">if</span>(b-&gt;dev == dev &amp;&amp; b-&gt;blockno == blockno){
-      b-&gt;refcnt++;
-      <span class="hljs-built_in">release</span>(&amp;bcache.lock);
-      acquiresleep(&amp;b-&gt;lock);
-      <span class="hljs-keyword">return</span> b;
-    }
-  }
-
-  <span class="hljs-comment">// Not cached.</span>
-  <span class="hljs-comment">// Recycle the least recently used (LRU) unused buffer.</span>
-  <span class="hljs-keyword">for</span>(b = bcache.head.prev; b != &amp;bcache.head; b = b-&gt;prev){
-    <span class="hljs-keyword">if</span>(b-&gt;refcnt == <span class="hljs-number">0</span>) {
-      b-&gt;dev = dev;
-      b-&gt;blockno = blockno;
-      b-&gt;valid = <span class="hljs-number">0</span>;
-      b-&gt;refcnt = <span class="hljs-number">1</span>;
-      <span class="hljs-built_in">release</span>(&amp;bcache.lock);
-      acquiresleep(&amp;b-&gt;lock);
-      <span class="hljs-keyword">return</span> b;
-    }
-  }
-  panic(<span class="hljs-string">"bget: no buffers"</span>);
-}
-</div></code></pre>
-<p><code>bread</code> firstly get a buffer by calling <code>bget</code>.</p>
-<p>if buffer is invalid (<code>valid == 0</code>), it is to load data from disk to buffer by calling <code>virtio_disk_rw</code></p>
-<pre class="hljs"><code><div><span class="hljs-comment">// Return a locked buf with the contents of the indicated block.</span>
-<span class="hljs-function">struct buf*
-<span class="hljs-title">bread</span><span class="hljs-params">(uint dev, uint blockno)</span>
-</span>{
-  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">buf</span> *<span class="hljs-title">b</span>;</span>
-
-  b = bget(dev, blockno);
-  <span class="hljs-keyword">if</span>(!b-&gt;valid) {
-    virtio_disk_rw(b, <span class="hljs-number">0</span>);
-    b-&gt;valid = <span class="hljs-number">1</span>;
-  }
-  <span class="hljs-keyword">return</span> b;
-}
-</div></code></pre>
-<p>writing is simple just by calling <code>virtio_disk_rw</code>.</p>
-<pre class="hljs"><code><div>// Write b's contents to disk.  Must be locked.
-void
-bwrite(struct buf *b)
-{
-  if(!holdingsleep(&amp;b-&gt;lock))
-    panic(&quot;bwrite&quot;);
-  virtio_disk_rw(b, 1);
+    e-&gt;next = (struct buf*)<span class="hljs-number">0</span>;
+    e-&gt;prev = (struct buf*)<span class="hljs-number">0</span>;
 }
 
+<span class="hljs-comment">// here is bug exist</span>
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">buf</span> <span class="hljs-title">b</span> = <span class="hljs-title">table</span>[<span class="hljs-title">i</span>];</span> 
+rm(&amp;b);
 </div></code></pre>
-<p>Because when getting a buffer, it return a locked buffer, so it is very important to release a buffer when done of reading or writing .</p>
-<p><code>brelse</code> provides such an API. Why moving to the head of most-recently-used list only when <code>refcnt</code> becomes 0</p>
-<pre class="hljs"><code><div><span class="hljs-comment">// Release a locked buffer.</span>
-<span class="hljs-comment">// Move to the head of the most-recently-used list.</span>
-<span class="hljs-function"><span class="hljs-keyword">void</span>
-<span class="hljs-title">brelse</span><span class="hljs-params">(struct buf *b)</span>
-</span>{
-  <span class="hljs-keyword">if</span>(!holdingsleep(&amp;b-&gt;lock))
-    panic(<span class="hljs-string">"brelse"</span>);
+<p>The way to fix above bug is to make <code>rm</code> directly on <code>table[i]</code>, which is <code>rm(&amp;table[i])</code>.</p>
+<h3 id="doubly-linked-list-operation-bug">Doubly Linked List  Operation Bug</h3>
+<p>Another bug is in the <code>rm</code> operation, which is to delete a node in doubly linked list.  The bug is here <code>e-&gt;prev = e-&gt;next;</code>, it should be <code>e-&gt;prev-&gt;next = e-&gt;next;</code></p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span>
+<span class="hljs-title">rm</span><span class="hljs-params">(<span class="hljs-keyword">int</span> blockno, struct buf *e)</span> <span class="hljs-comment">// remove buf in double linked list </span>
+</span>{   
+    
+    e-&gt;prev = e-&gt;next; <span class="hljs-comment">// bug is here</span>
+    e-&gt;next-&gt;prev = e-&gt;prev;
 
-  releasesleep(&amp;b-&gt;lock);
-
-  acquire(&amp;bcache.lock);
-  b-&gt;refcnt--;
-  <span class="hljs-keyword">if</span> (b-&gt;refcnt == <span class="hljs-number">0</span>) {
-    <span class="hljs-comment">// no one is waiting for it.</span>
-    b-&gt;next-&gt;prev = b-&gt;prev;
-    b-&gt;prev-&gt;next = b-&gt;next;
-    b-&gt;next = bcache.head.next;
-    b-&gt;prev = &amp;bcache.head;
-    bcache.head.next-&gt;prev = b;
-    bcache.head.next = b;
-  }
-  
-  <span class="hljs-built_in">release</span>(&amp;bcache.lock);
+    e-&gt;next = (struct buf*)<span class="hljs-number">0</span>;
+    e-&gt;prev = (struct buf*)<span class="hljs-number">0</span>;
 }
 </div></code></pre>
-<h3 id="pros-and-cons">Pros and Cons</h3>
-<p>Pros:</p>
-<ol>
-<li>Simple. It uses a simple data structure, doubly linked list,  to implement LRU.</li>
-</ol>
-<p>Cons:</p>
-<ol>
-<li>Not efficient. Searching on buffer takes O(n), which is unefficient. The way to solove this question is to use hash table as a way to improve searching.</li>
-<li>Lock contention. There is a global lock to proctect the doubly linked list, which may cause lock contention. The possible idea is to maintain buckets by using hash table, and each bucket is a doubly linke list.</li>
-</ol>
 
 </body>
 </html>

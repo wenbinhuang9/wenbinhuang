@@ -1,6 +1,8 @@
 ## May 2021
 
 
+[xv6: Debug Buffer Cache Lock Contention Lab](./xv6/xv6:debug-on-locking-lab.html)
+
 [xv6: Block Cache in File System ](./xv6/fs-block-cache.html)
 
 [xv6: multithreading lab](./xv6/xv6-multithreading.html)

@@ -7,7 +7,7 @@ Buffer cache is built on the top of Disk. The storage unit in disk is block, the
 ![](xv6-fs-layer.png)
 
 
-bcache data structure. The buffers are linked by double linked list, which is a data structure frequently used in LRU. And the buffer cache also uses LRU. 
+bcache data structure. The buffers are linked by double linked list, which is a data structure frequently used in LRU. And the buffer cache also uses LRU.  
 
 
 ```C
@@ -62,7 +62,7 @@ binit(void)
 }
 ```
 
-The first step is to try to find the block from buffer. If not found, then allocting a buffer using LRU strategy. It is important to ask why always return a blocked buffer? 
+The first step is to try to find the block from buffer. If not found, then allocting a buffer using LRU strategy. It is important to ask why always return a blocked buffer? Because file system is shared by processes, it is  important to provide synchronization to access block. So here, when getting a block, it must be locked before return to ensure the invariant that only one process can access the block .
 ```C
 // Look through buffer cache for block on device dev.
 // If not found, allocate a buffer.
@@ -120,7 +120,7 @@ bread(uint dev, uint blockno)
 }
 ```
 
-writing is simple just by calling `virtio_disk_rw`. And why need to lock the buffer before writing,   
+writing is simple just by calling `virtio_disk_rw`. 
 ```
 // Write b's contents to disk.  Must be locked.
 void
@@ -163,19 +163,13 @@ brelse(struct buf *b)
 }
 ```
 
-why such two APIs? 
-```C
-void
-bpin(struct buf *b) {
-  acquire(&bcache.lock);
-  b->refcnt++;
-  release(&bcache.lock);
-}
+### Pros and Cons 
 
-void
-bunpin(struct buf *b) {
-  acquire(&bcache.lock);
-  b->refcnt--;
-  release(&bcache.lock);
-}
-```
+Pros:
+
+1. Simple. It uses a simple data structure, doubly linked list,  to implement LRU. 
+
+Cons:
+
+1. Not efficient. Searching on buffer takes O(n), which is unefficient. The way to solove this question is to use hash table as a way to improve searching. 
+2. Lock contention. There is a global lock to proctect the doubly linked list, which may cause lock contention. The possible idea is to maintain buckets by using hash table, and each bucket is a doubly linke list. 
