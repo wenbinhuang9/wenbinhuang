@@ -1,5 +1,9 @@
 ## May 2021
+[focus on mit 6824](./distributed-system/forcus-on-mit-6824.md)
 
+[git notes](./tools/git-notes.md)
+
+[xv6: First MileStone](./xv6/xv6-milestone.md)
 
 [xv6: Debug Buffer Cache Lock Contention Lab](./xv6/xv6:debug-on-locking-lab.html)
 

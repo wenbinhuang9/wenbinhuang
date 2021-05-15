@@ -21,7 +21,7 @@ gdb-multiarch
 ![](gdb-xv6-debug.png)
 
 
-If you want to debug on a xv6 user program, use command `file` gdb like `file user/wc`, set breakpoint and then run `user program ` in xv6.
+If you want to debug on a xv6 user program, use command `file` gdb like `file user/_wc`, set breakpoint and then run `user program ` in xv6.
 
 ### Reference 
 

@@ -37,7 +37,13 @@ int main() {
 
 `print $rax` to print value in register %rax
 
+`p *a` to print content in pointer. 
 
-Reference 
+`bt` to print backtrace
+
+`skip` to skip to step into function. 
+
+
+### Reference 
 
 [csapp gdbnotes](http://csapp.cs.cmu.edu/2e/docs/gdbnotes-x86-64.pdf)
