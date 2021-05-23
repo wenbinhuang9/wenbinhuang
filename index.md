@@ -1,4 +1,10 @@
 ## May 2021
+[Focus and Distraction](randomwalk/focus-distraction.md)
+
+[What to Do When Overthinking or Underthinking](randomwalk/over-under-think.md)
+
+[Raft: A Bug](./distributed-system/raft-a-bug.html)
+
 [focus on mit 6824](./distributed-system/forcus-on-mit-6824.md)
 
 [git notes](./tools/git-notes.md)
