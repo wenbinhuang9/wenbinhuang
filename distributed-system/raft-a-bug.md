@@ -14,7 +14,7 @@ So the way to debug is to print each peer's commited log.
 
 Just like the below log, initially, command 6414 has been inserted into peer 1
 ```
-[peer 1, term 6] 2021/05/16 04:15:28 AppendEntries Success &{{1 0} [0xc00000cdc0 0xc00000cde0 0xc00000ce00 0xc00000ce20 0xc00000ce40] 0xc000067d80 1 0 6 2 [{0 <nil> 0} {2 9481 1} {2 8950 2} {2 2272 3} {2 697 4} {2 2696 5} {4 7529 6} {4 5018 7} {6 6661 8} {6 3680 9} {6 6414 10}] 1 1 map[1:1] 8 0 [0 0 0 0 0] [0 0 0 0 0] 1621138528569 0xc00001a420}
+[peer 1, term 6] 2021/05/16 04:15:28 AppendEntries Success {1 0} [0xc00000cdc0 0xc00000cde0 0xc00000ce00 0xc00000ce20 0xc00000ce40] 0xc000067d80 1 0 6 2 [{0 <nil> 0} {2 9481 1} {2 8950 2} {2 2272 3} {2 697 4} {2 2696 5} {4 7529 6} {4 5018 7} {6 6661 8} {6 3680 9} {6 6414 10}] 1 1 map[1:1] 8 0 [0 0 0 0 0] [0 0 0 0 0] 1621138528569 0xc00001a420}
 
 ```
 
