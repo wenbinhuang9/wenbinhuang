@@ -1,3 +1,8 @@
+## June 2021
+[最近比较忙](./randomwalk/最近比较忙.md)
+
+[Ask Good Questions](./randomwalk/ask-good-question.md)
+
 ## May 2021
 [加州路考](./randomwalk/加州路考.md)
 
