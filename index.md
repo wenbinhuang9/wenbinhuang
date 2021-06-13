@@ -1,4 +1,6 @@
 ## June 2021
+[Cardo de rest, 墨西哥牛肉汤大乱炖](./randomwalk/cardo-de-res-墨西哥-牛肉汤.md)
+
 [最近比较忙](./randomwalk/最近比较忙.md)
 
 [Ask Good Questions](./randomwalk/ask-good-question.md)
