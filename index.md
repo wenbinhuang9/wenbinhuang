@@ -1,5 +1,20 @@
+## July 2021
+[Front End Techs Evolution](./front-end/web-start-from-static-web.md)
+
 ## June 2021
-[Cardo de rest, 墨西哥牛肉汤大乱炖](./randomwalk/cardo-de-res-墨西哥-牛肉汤.md)
+[Aurora durability: Segmented Storage](./database/aurora-durability-segmented-storage.md)
+
+[Quorum Model in Aurora](./database/quorum-model-in-aurora.md)
+
+[ Quorum Based Replication Model](./database/quorums-based-replication-model.md)
+
+[Paper Reading: Aurora Notes I](./database/aurora-notes1.md)
+
+[Relational Database Architecture Evolution, From Application Perspective](./database/database-evolution-from-app-perspective.md)
+
+[Every bug-fix commit should come with a test case](./devops/bug-fix-commit-and-test-case.md)
+
+[Cardo de res, 墨西哥牛肉汤大乱炖](./randomwalk/cardo-de-res-墨西哥-牛肉汤.md)
 
 [最近比较忙](./randomwalk/最近比较忙.md)
 
