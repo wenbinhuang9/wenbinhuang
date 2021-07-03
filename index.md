@@ -1,4 +1,6 @@
 ## July 2021
+[Introduction to Infrastructure as Code ](./devops/intro-IaC.md)
+
 [Front End Techs Evolution](./front-end/web-start-from-static-web.md)
 
 ## June 2021
@@ -6,7 +8,7 @@
 
 [Quorum Model in Aurora](./database/quorum-model-in-aurora.md)
 
-[ Quorum Based Replication Model](./database/quorums-based-replication-model.md)
+[Quorum Based Replication Model](./database/quorums-based-replication-model.md)
 
 [Paper Reading: Aurora Notes I](./database/aurora-notes1.md)
 
