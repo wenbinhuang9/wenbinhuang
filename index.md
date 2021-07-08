@@ -1,4 +1,8 @@
 ## July 2021
+[Code Review and Comments](./code-review/code-review-comments.md)
+
+[How to Code Review](./code-review/how-cr.md)
+
 [Introduction to Infrastructure as Code ](./devops/intro-IaC.md)
 
 [Front End Techs Evolution](./front-end/web-start-from-static-web.md)
