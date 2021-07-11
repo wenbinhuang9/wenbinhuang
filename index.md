@@ -1,5 +1,7 @@
 ## July 2021
-[Code Review and Comments](./code-review/code-review-comments.md)
+[Clean Code and Functions](./code-review/clean-code-and-functions.md)
+
+[Clean Code and Comments](./code-review/code-review-comments.md)
 
 [How to Code Review](./code-review/how-cr.md)
 
