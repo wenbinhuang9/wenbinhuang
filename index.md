@@ -1,4 +1,10 @@
 ## July 2021
+[Java: Factory Design Pattern Overview](./pattern/Factory-pattern.md)
+
+[Regular Expression is an Object in Javascript](./front-end/js-re-demo.md)
+
+[Javascript: Demos For Functional Programming](./front-end/javascript-functional-programming-demo.md)
+
 [Clean Code and Functions](./code-review/clean-code-and-functions.md)
 
 [Clean Code and Comments](./code-review/code-review-comments.md)
