@@ -1,4 +1,6 @@
 ## July 2021
+[Object Storage Overview](./database/object-storage-overview.md)
+
 [Java: Factory Design Pattern Overview](./pattern/Factory-pattern.md)
 
 [Regular Expression is an Object in Javascript](./front-end/js-re-demo.md)
