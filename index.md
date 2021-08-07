@@ -1,3 +1,8 @@
+## Aug. 2021 
+[分布式知识梳理]
+
+[杂谈](./randomwalk/杂谈1.md)
+
 ## July 2021
 [Object Storage Overview](./database/object-storage-overview.md)
 
