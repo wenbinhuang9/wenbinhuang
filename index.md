@@ -1,5 +1,13 @@
+## OCT. 2021
+
+[Relational database components](./database/relational-databse-componenets.md)
+
+[Database Process Model](./database/database-process-model.md)
+
+[10月的开篇](./randomwalk/开篇.md)
+
 ## Aug. 2021 
-[分布式知识梳理]
+[分布式知识梳理](./distributed-system/分布式知识梳理.md)
 
 [杂谈](./randomwalk/杂谈1.md)
 
