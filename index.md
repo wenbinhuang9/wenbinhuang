@@ -1,4 +1,7 @@
 ## OCT. 2021
+[A Basic Understanding OLAP](./database/OLAP.md)
+
+[A Basic Understanding of OLTP](./database/OLTP.md)
 
 [Relational database components](./database/relational-databse-componenets.md)
 
