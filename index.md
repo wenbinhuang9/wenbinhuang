@@ -1,4 +1,16 @@
 ## OCT. 2021
+[Memory Leak From BufferInputStream](./java/memory-leak-java-bufferinputstream.md)
+
+[Json: a hierarchy data model](./database/json-a-hierarchy-data-model.md)
+
+[Innodb data structure](./database/innodb-data-structure.md)
+
+[RDBMS Architecture](./database/DBMS-shared-disk.md)
+
+[Access Method in RDBMS](./database/acess-method.md)
+
+[OLAP vs OLTP](./database/OLTP-vs-OLAP.md)
+
 [A Basic Understanding OLAP](./database/OLAP.md)
 
 [A Basic Understanding of OLTP](./database/OLTP.md)
