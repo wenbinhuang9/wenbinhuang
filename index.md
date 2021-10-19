@@ -1,4 +1,6 @@
 ## OCT. 2021
+[Row Oriented vs Column Oriented Database](./database/row-based-column-based-database.md)
+
 [Memory Leak From BufferInputStream](./java/memory-leak-java-bufferinputstream.md)
 
 [Json: a hierarchy data model](./database/json-a-hierarchy-data-model.md)
