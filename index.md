@@ -1,4 +1,22 @@
+## NOV. 2021
+[WAS Load Balancing Model](./database/WAS-load-balacing-model.md)
+
+[WAS Replication Model](./database/WAS-replication-model.md)
+
+[11 月份开篇](./randomwalk/11月份开篇.md)
+
 ## OCT. 2021
+
+[Storage System Durability](./database/durability.md)
+
+[Paper Reading: First Impression on Google Spanner](./database/first-impression-spanner.md)
+
+[Paper Reading: First Impression on Azure Storage Service ](./database/first-impression-azure-storage-service.md)
+
+[Aurora Push Down](./database/aurora-push-down.md)
+
+[Start the program optimization travel](./optimization/optimization-ideas.md)
+
 [Row Oriented vs Column Oriented Database](./database/row-based-column-based-database.md)
 
 [Memory Leak From BufferInputStream](./java/memory-leak-java-bufferinputstream.md)
