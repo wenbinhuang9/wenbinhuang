@@ -1,0 +1,2 @@
+## Transaction in Spanner 
+Spanner supports transaction. When a transaction is within a paxos group, transcation will be done locally. But when transactions are across paxos groups, transactions are done by 2PC protocol. 2PC has a availability issue when there is a network partition. But Spanner still provides this gurantee, because Spanner get lessons from big table and want to provide a consistency for customers. 

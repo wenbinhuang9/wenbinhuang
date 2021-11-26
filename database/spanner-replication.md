@@ -1,0 +1,3 @@
+# Replication in Spanner 
+
+In spanner, it uses single paxos state machine for replication. In each paxos group, there are 3 instances, one of them are primary instance. Primary instance accepts writing and replicates to two other instances. And the replication is chaining. And the paxos state machine in Spanner is designed for long term living leader, because leader also plays an important role in transaction management. 

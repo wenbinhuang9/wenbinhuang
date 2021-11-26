@@ -1,4 +1,10 @@
 ## NOV. 2021
+[Watching video: Leslie Lamport - The Paxos Algorithm ](./database/Leslie-import-the-paxos-algorithm-formalization.md)
+
+[Spanner Transaction](./database/spanner-transaction.md)
+
+[Spanner Replication Model](./database/spanner-replication.md)
+
 [WAS Load Balancing Model](./database/WAS-load-balacing-model.md)
 
 [WAS Replication Model](./database/WAS-replication-model.md)
