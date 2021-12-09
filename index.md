@@ -1,3 +1,15 @@
+## DEC. 2021
+[毛选中让我印象深刻的文章](./randomwalk/毛选中的文章.md)
+
+[目前英语沟通的困难](./randomwalk/目前英语沟通的困难.md)
+
+[说服力](./randomwalk/说服力.md)
+
+[沟通和共情力](./randomwalk/浅谈沟通.md)
+
+[墨西哥美食](./randomwalk/墨西哥美食.md)
+
+[11 月份开篇](./randomwalk/12月份开篇.md)
 ## NOV. 2021
 [Watching video: Leslie Lamport - The Paxos Algorithm ](./database/Leslie-import-the-paxos-algorithm-formalization.md)
 
